@@ -17,7 +17,6 @@ $products = array(
 );
 
 $user = null;
-$totalPrice = null;
 
 $selectedProducts = array();
 
@@ -29,14 +28,15 @@ if (isset($_POST['submit'])){
         isset($_POST['selected-products'])
     ){
 
-        $selectedProductIndices = $_POST['selected-products'];
-        $user = new User($_POST['name'], $_POST['spending-limit']);
+        $selectedProductMark = $_POST['selected-products'];
+        $selectedProducts = array();
 
-        foreach ($selectedProductIndices as $index => $selectedProductIndex) {
+        foreach ($selectedProductMark as $index => $selectedProductIndex) {
             $product = $products[$selectedProductIndex];
             $selectedProducts[$index] = $product;
-            $totalPrice += $product->getPrice();
         }
+
+        $user = new User($_POST['name'], $_POST['spending-limit'], $selectedProducts);
 
     }
 
@@ -76,7 +76,7 @@ if (isset($_POST['submit'])){
             <label
                     for="input-spending-limit"
                     class="form-label"
-                    id="input-spending-limit-label">Spending limit</label>
+                    id="input-spending-limit-label">Spending Limit</label>
             <input
                     id="input-spending-limit"
                     class="form-control"
@@ -109,7 +109,8 @@ if (isset($_POST['submit'])){
     <div style="text-align: center; margin-top: 10px">
         <?php
         if (!empty($selectedProducts)){
-            if ($totalPrice > $user->getSpendingLimit()) {
+            $totalPrice = $user->getSpendingLimit();
+            if ($totalPrice > $user->getSpendingLimit()){
                 echo "You have exceeded your spending limit.<br>";
                 echo "Total price: $$totalPrice<br>";
                 echo "Spending limit: $" . $user->getSpendingLimit() . "<br>";
